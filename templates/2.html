@@ -1,0 +1,374 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+<title>
+	<?php echo $this->ShowTitle();?>
+</title>
+<meta name="description" content="k26" />
+<meta name="keywords" content="k26" />
+<meta http-equiv="Content-Language" content="ru" />
+<meta content="text/html; charset=utf-8" http-equiv=Content-Type />
+<meta name="robots" content="index,follow" />
+<meta HTTP-EQUIV="Cache-Control" CONTENT="no-cache" />
+<link href="/favicon.ico" rel="shortcut icon" type="image/x-icon">
+
+<meta HTTP-EQUIV="Pragma" CONTENT="no-cache" />
+<meta HTTP-EQUIV="Expires" Content="Mon, 22 Mar 2004 00:00:01 GMT" />
+<?php echo $this->ShowStyle();?>
+
+<link rel="stylesheet" media="all" type="text/css"
+	href="/js/themes/ui-lightness/jquery-ui-1.8.4.custom.css" />
+
+<script language="Javascript" src="/js/jquery-1.4.2.min.js"></script>
+<script language="Javascript" src="/js/jquery-ui-1.8.4.custom.min.js"></script>
+<script language="Javascript"
+	src="/js/ui/jquery-ui-timepicker-addon-0.6.min.js"></script>
+
+<script language="Javascript" src="/js/jquery.form.js"></script>
+<script language="Javascript" src="/js/jquery.corner.js"></script>
+<script language="Javascript" src="/tinymce/jquery.tinymce.js"></script>
+<script language="Javascript" src="/js/picnet.table.filter.min.js"></script>
+<script language="Javascript" src="/js/jquery.tablesorter.js"></script>
+<script language="Javascript" src="/js/jquery.tablesorter.pager.js"></script>
+
+<script language="Javascript" src="/js/uploader/jquery.MultiFile.js"></script>
+<script language="Javascript" src="/js/jquery-tooltip/jquery.tooltip.js"></script>
+
+<script language="Javascript" src="/js/modal/popup.js"></script>
+
+
+<script type="text/javascript">
+    	var g_sAutoReloadNotificationsListHref = 'admin/admin-ajax/?action=test-notification';
+
+    	function AutoReload() {            
+	  		$("#notify").load(g_sAutoReloadNotificationsListHref);
+        }
+
+   		//setInterval("AutoReload()",10000);
+	</script>
+
+</head>
+
+<body id="body" onload="AutoReload()">
+
+	<div id="notify"></div>
+
+	<div id="adminpanel">
+		<table cellpadding="0" cellspacing="3" border="0" align="right">
+			<tr>
+				<td style="width: 50px;">Пользователь:</td>
+				<td>
+					<?php
+				$user = new User(0, array("load_current_user"=>true));
+				if($user->GetId() > 0)
+				{
+					// Отобразим группу пользователя.
+					if($user->GetGroupId() > 0) $usergroup = new UserGroup($user->GetGroupId());
+					?> <a href="."
+					style="color: green; font-weight: bold; text-decoration: none; border-bottom: 1px dashed green;">
+						<?php echo $user->GetLogin()."</a> [".(($usergroup)?($usergroup->GetName()):"");?>]
+						| <a href="./?logout"><img src="/images/iicons/door.png"
+							alt="Выход" title="Выход" align="absmiddle" /></a>
+					<?php
+				}else{
+					?>
+						<span style="color: gray;">Гость</span>
+					<?php
+				}
+				?>
+				</td>
+				<?php
+			if($user->GetId() <= 0)
+			{
+				?>
+				<form name="login_form" action="." method="POST">
+					<td>Имя пользователя:</td>
+					<td><input type="text" name="login_username" size="15"
+						style="" /></td>
+					<td>Пароль:</td>
+					<td><input type="password" name="login_password" size="15"
+						style="" /></td>
+					<td><input type="image" src="/images/iicons/door_in.png" /></td>
+				</form>
+				<?php
+			}
+			?>
+			</tr>
+		</table>
+		<table cellpadding="0" cellspacing="3" border="0" id="breadcrumbs">
+			<tr>
+				<td>
+					<?php
+				$PageController = PageController::getInstance();
+					$ierarchy = $PageController->GetCurrentPageIerarchy();
+					for($i=0;$i<count($ierarchy);++$i)
+					{
+						if($i>0)
+						{
+						?> &rarr; <?php
+						}
+						?> <a
+					href="
+					<?php
+					for($j=0;$j<=$i;++$j)
+					{
+						echo $ierarchy[$j]['url'];
+					}
+					?>
+					<?php echo ($i>0)?"/":""?>"
+						class="breadcrumbs"><?php echo $ierarchy[$i]['name']?>
+				</a> <?php
+						}
+			?>
+				</td>
+			</tr>
+		</table>
+		<hr />
+		<table id="admintable" cellpadding="0" cellspacing="2">
+			<tr>
+				<td width="250">
+					<table id="menutable" cellpadding="0" cellspacing="0">
+
+
+						<thead>
+							<th colspan="3" class="menu-head" id="menu-head3">Структура
+								сайта</th>
+						</thead>
+						<tr>
+							<td>
+								<ul class="folding-menu" id="folding-menu3">
+									<li><a href="/admin/?action=static-data-list">Статические
+											элементы страниц</a></li>
+									<li><a href="/admin/?action=dynamic-data-list">Динамические
+											элементы страниц</a></li>
+									<li><a href="/admin/?action=page-form&id=0&page-type=1">Привязка
+											элементов к контенту</a></li>
+								</ul>
+							</td>
+						</tr>
+						<thead>
+							<th colspan="3" class="menu-head" id="menu-head1">XSL
+								Шаблоны</th>
+						</thead>
+						<tr>
+							<td>
+								<ul class="folding-menu" id="folding-menu1">
+									<li><a href="/admin/?action=xsltemplates-list"
+										id="xsltemplateslist">Список XSL шаблонов</a></li>
+								</ul>
+							</td>
+						</tr>
+
+
+
+						<thead>
+							<th colspan="3" class="menu-head" id="menu-head1">Договоры</th>
+						</thead>
+						<tr>
+							<td>
+								<ul class="folding-menu" id="folding-menu1">
+									<li><a href="/admin/?action=contracts-list">Список
+											договоров</a></li>
+								</ul>
+							</td>
+						</tr>
+
+
+						<thead>
+							<th colspan="3" class="menu-head" id="menu-head2">Структурные
+								едининцы</th>
+						</thead>
+						<tr>
+							<td>
+								<ul class="folding-menu" id="folding-menu2">
+									<li><a href="/admin/?action=hierarchy">Активная
+											иерархия</a></li>
+									<li><a href="/admin/?action=organizations-list">Список
+											организаций</a></li>
+									<li><a href="/admin/?action=departments-list">Список
+											подразделений</a></li>
+									<li><a href="/admin/?action=users-list">Список
+											пользователей</a></li>
+									<!-- <li><a href="/admin/?action=users-groups-list">Рабочие группы</a></li>  -->
+								</ul>
+							</td>
+						</tr>
+
+						<thead>
+							<th colspan="3" class="menu-head" id="menu-head2">Расходные
+								материалы</th>
+						</thead>
+						<tr>
+							<td>
+								<ul class="folding-menu" id="folding-menu2">
+									<li><a href="/admin/?action=materials-list">Перечень
+											расходных материалов</a></li>
+								</ul>
+							</td>
+						</tr>
+
+						<thead>
+							<th colspan="3" class="menu-head" id="menu-head2">Права
+								доступа</th>
+						</thead>
+						<tr>
+							<td>
+								<ul class="folding-menu" id="folding-menu2">
+									<li><a href="/admin/?action=route-resposible-form">Распределение</a></li>
+									<li><a href="/admin/?action=new-route-resposible-form">Распределение
+											- new</a></li>
+									<li><a href="/admin/?action=test-mailform">Почтовая
+											форма</a></li>
+									<li><a href="/admin/?action=test-executorslist">Тест-исполнители</a></li>
+									<li><a href="/admin/?action=test-notification">Тест-уведомления</a></li>
+								</ul>
+							</td>
+						</tr>
+
+						<!--<thead>
+					<th colspan="3" class="menu-head" id="menu-head2">Запросы</th>
+				</thead>
+				<tr>
+					<td>
+						<ul class="folding-menu" id="folding-menu2">
+							<li><a href="/admin/?action=requests-list">Список запросов</a></li>
+						</ul>
+					</td>
+				</tr>
+				<thead>
+					<th colspan="3" class="menu-head" id="menu-head8">Лог</th>
+				</thead>
+				<tr>
+					<td>
+						<ul class="folding-menu" id="folding-menu8">
+							<li><a href="/admin/?action=log-list">Активность пользователей</a></li>
+						</ul>
+					</td>
+				</tr>
+				
+				 
+				<thead>
+					<th colspan="3" class="menu-head" id="menu-head10">Синхронизация</th>
+				</thead>
+				<tr>
+					<td>
+						<ul class="folding-menu" id="folding-menu10">
+							<li><a href="/admin/?action=FWSynchronization">WEB -> Lotus</a></li>
+							<li><a href="/admin/?action=BWSynchronization">Lotus -> WEB</a></li>
+							<li><a href="/admin/admin-ajax/?action=TestSynchronization">TEST</a></li>
+						</ul>
+					</td>
+				</tr>
+				-->
+
+					</table>
+				</td>
+				<td id="jquery_load" align="center">
+					<?php echo $this->ShowContent()?>
+				</td>
+			</tr>
+		</table>
+		<hr />
+
+		<script>
+
+	var menu_head_preg = /^(([a-z-]+)([0-9]+))$/i;
+
+	function ShowAjaxLoader()
+	{
+		$("#ajaxloader").show();
+	}
+	
+	function HideAjaxLoader()
+	{
+		$("#ajaxloader").hide();
+	}
+	
+	/*$("#xsltemplateslist").click(function(e) {
+		e.preventDefault();
+		LoadContent(this.href, {"action":"xsktemplates-list"});
+		//$("#jquery_load").load("/admin/admin-ajax/", {"ajax":"1","action":"xsltemplates-list"},HideAjaxLoader);
+	});*/
+	
+	function LoadContent(href, parameters)
+	{
+		ShowAjaxLoader();
+		//alert(parameters);
+		$("#jquery_load").load(href, parameters, HideAjaxLoader);
+	}
+	
+	function LoadContentWFormPost()
+	{
+		LoadContent("/admin/admin-ajax/", $("#ajaxform").formSerialize());
+		return false;
+	}
+	
+	function FinishLoad()
+	{
+		HideAjaxLoader();	
+	}
+	
+	function AddClickHandlers()
+	{
+		$("a.remote").click(function(e) {
+			e.preventDefault();
+			LoadContent(this.href, {});
+			return false;
+		});
+		$("a.remote-post").click(function(e) {
+			e.preventDefault();
+			LoadContent(this.href, $("#ajaxform").formSerialize());
+			return false;
+		});
+		$("a.remote-url").click(function(e) {
+			e.preventDefault();
+			LoadContent(this.href, {});
+			return false;
+		});
+	}
+	
+	function AddFormsHandlers()
+	{
+		$("form").submit(function(){
+			$(this).ajaxSubmit({"target":"#jquery_load","beforeSubmit": showRequest});
+			return false;
+		});
+	}
+	
+	function AddMenuFolding()
+	{ // Анимация меню
+		$("th.menu-head").click(function(){
+			elres = this.id.match(menu_head_preg);
+			$("#folding-menu"+elres[3]).slideToggle('fast');
+		})
+	}
+	
+	// когда загрузили контент - поправляем ссылки.
+	$("#jquery_load").ajaxComplete(AddClickHandlers);
+	// Назначаем ссылкам ajax эвенты.
+	$(document).ready(AddClickHandlers);
+	$(document).ready(AddMenuFolding);
+	
+	function showRequest(formData, jqForm, options) { 
+    // formData is an array; here we use $.param to convert it to a string to display it 
+    // but the form plugin does this for you automatically when it submits the data 
+    var queryString = $.param(formData); 
+ 
+    // jqForm is a jQuery object encapsulating the form element.  To access the 
+    // DOM element for the form do this: 
+    // var formElement = jqForm[0]; 
+ 
+    alert('About to submit: \n\n' + queryString); 
+ 
+    // here we could return false to prevent the form from being submitted; 
+    // returning anything other than false will allow the form submit to continue 
+    return true; 
+	}	
+</script>
+
+		<div id="ajaxloader">
+			<img src="/images/ajax-loader.gif" />
+		</div>
+	</div>
+</body>
+</html>
