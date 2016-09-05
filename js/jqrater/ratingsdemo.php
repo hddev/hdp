@@ -1,1 +1,0 @@
-Ajax says: It's a <?php echo($_POST['rating']); ?>!
